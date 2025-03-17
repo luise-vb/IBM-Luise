@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luise IBM - Information Management Assignments</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .upload-section {
+            margin-bottom: 30px;
+        }
+        .assignment-list {
+            margin-top: 40px;
+        }
+        .assignment-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-download {
+            background-color: #27ae60;
+        }
+        .btn-download:hover {
+            background-color: #219651;
+        }
+        .btn-delete {
+            background-color: #e74c3c;
+        }
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        #file-selected {
+            margin-left: 10px;
+            font-style: italic;
+        }
+        .hidden {
+            display: none;
+        }
+        .ibm-logo {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .ibm-logo a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .ibm-logo a:hover {
+            text-decoration: underline;
+        }
+        .buttons-container {
+            display: flex;
+        }
+        .storage-warning {
+            background-color: #fcf8e3;
+            border: 1px solid #faebcc;
+            color: #8a6d3b;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .file-info {
+            flex: 1;
+        }
+        #spinner {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Information Management in Life</h1>
+        <p>Assignment Submission Portal</p>
+        <div class="ibm-logo">
+            <a href="https://www.ibm.com/luise" target="_blank">Luise IBM</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="storage-warning">
+            Note: Files are stored in your browser's local storage. Large files may not save properly. Maximum recommended file size: 2MB.
+        </div>
+        
+        <section class="upload-section">
+            <h2>Upload Assignment</h2>
+            <p>Select your assignment file and click the upload button.</p>
+            
+            <div class="file-input-wrapper">
+                <button class="btn">Select File</button>
+                <input type="file" id="assignment-file">
+            </div>
+            <span id="file-selected">No file selected</span>
+            
+            <div style="margin-top: 20px;">
+                <button id="upload-btn" class="btn" disabled>Upload Assignment</button>
+                <span id="upload-status" class="hidden">Assignment uploaded successfully!</span>
+                <div id="spinner">Uploading...</div>
+            </div>
+        </section>
+
+        <section class="assignment-list">
+            <h2>Your Assignments</h2>
+            <div id="assignment-container">
+                <!-- Assignment items will be added here dynamically -->
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Information Management in Life Class &copy; 2025</p>
+        <p>Powered by <a href="https://www.ibm.com/luise" target="_blank">Luise IBM</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('assignment-file');
+            const fileSelected = document.getElementById('file-selected');
+            const uploadBtn = document.getElementById('upload-btn');
+            const uploadStatus = document.getElementById('upload-status');
+            const assignmentContainer = document.getElementById('assignment-container');
+            const spinner = document.getElementById('spinner');
+            
+            let assignments = [];
+            
+            // Load any existing assignments from localStorage
+            try {
+                const savedAssignments = localStorage.getItem('luise-ibm-assignments');
+                if (savedAssignments) {
+                    assignments = JSON.parse(savedAssignments);
+                    renderAssignments();
+                }
+            } catch (error) {
+                console.error('Error loading assignments:', error);
+                localStorage.removeItem('luise-ibm-assignments');
+            }
+
+            // Show selected filename
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    fileSelected.textContent = file.name;
+                    uploadBtn.disabled = false;
+                    
+                    // Check file size
+                    if (file.size > 2 * 1024 * 1024) { // 2MB
+                        document.getElementById("storage-warning").style.display = 'block'; // Display custom warning
+                    } else {
+                        document.getElementById("storage-warning").style.display = 'none';
+                    }
+                } else {
+                    fileSelected.textContent = 'No file selected';
+                    uploadBtn.disabled = true;
+                }
+            });
+            
+            // Handle upload button click
+            uploadBtn.addEventListener('click', function() {
+                if (fileInput.files.length === 0) return;
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'Uploading...';
+                spinner.style.display = 'block'; // Show spinner
+                
+                const file = fileInput.files[0];
+                
+                // Read the file data as a DataURL
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const fileData = e.target.result; // This is the file content as a DataURL
+                        
+                        const newAssignment = {
+                            id: Date.now(), // Using timestamp as id for uniqueness
+                            name: Date.now() + "_" + file.name, // Add timestamp to file name for uniqueness
+                            date: new Date().toLocaleDateString(),
+                            size: formatFileSize(file.size),
+                            type: file.type,
+                            data: fileData // Store the file data
+                        };
+                        
+                        assignments.push(newAssignment);
+                        
+                        // Try to save to localStorage
+                        try {
+                            localStorage.setItem('luise-ibm-assignments', JSON.stringify(assignments));
+                        } catch (e) {
+                            alert('Error saving file: Storage limit exceeded. Try using smaller files or clearing some existing assignments.');
+                            assignments.pop(); // Remove the assignment we just tried to add
+                            renderAssignments();
+                            uploadBtn.disabled = false;
+                            uploadBtn.textContent = 'Upload Assignment';
+                            spinner.style.display = 'none'; // Hide spinner
+                            return;
+                        }
+                        
+                        // Reset file input and show success message
+                        fileInput.value = '';
+                        fileSelected.textContent = 'No file selected';
+                        uploadBtn.disabled = true;
+                        uploadBtn.textContent = 'Upload Assignment';
+                        spinner.style.display = 'none'; // Hide spinner
+                        
+                        uploadStatus.classList.remove('hidden');
+                        setTimeout(() => {
+                            uploadStatus.classList.add('hidden');
+                        }, 3000);
+                        
+                        renderAssignments();
+                    } catch (error) {
+                        console.error('Error processing file:', error);
+                        alert('An error occurred while processing the file. Please try again.');
+                        uploadBtn.disabled = false;
+                        uploadBtn.textContent = 'Upload Assignment';
+                        spinner.style.display = 'none'; // Hide spinner
+                    }
+                };
+                
+                reader.onerror = function() {
+                    alert('Error reading file. Please try again.');
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'Upload Assignment';
+                    spinner.style.display = 'none'; // Hide spinner
+                };
+                
+                reader.readAsDataURL(file);
+            });
+            
+            function renderAssignments() {
+                assignmentContainer.innerHTML = '';
+                
+                if (assignments.length === 0) {
+                    assignmentContainer.innerHTML = '<p>No assignments uploaded yet.</p>';
+                    return;
+                }
+                
+                assignments.forEach((assignment, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'assignment-item';
+                    
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = assignment.data;
+                    downloadLink.download = assignment.name;
+                    downloadLink.className = 'btn btn-download';
+                    downloadLink.textContent = 'Download';
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'btn btn-delete delete-btn';
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.setAttribute('data-id', assignment.id);
+                    
+                    const fileInfoDiv = document.createElement('div');
+                    fileInfoDiv.className = 'file-info';
+                    fileInfoDiv.innerHTML = `
+                        <strong>Assignment ${index + 1}</strong>
+                        <div>Filename: ${assignment.name}</div>
+                        <div>Uploaded: ${assignment.date}</div>
+                        <div>Size: ${assignment.size}</div>
+                    `;
+                    
+                    const buttonsDiv = document.createElement('div');
+                    buttonsDiv.className = 'buttons-container';
+                    buttonsDiv.appendChild(downloadLink);
+                    buttonsDiv.appendChild(deleteButton);
+                    
+                    item.appendChild(fileInfoDiv);
+                    item.appendChild(buttonsDiv);
+                    
+                    assignmentContainer.appendChild(item);
+                });
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        deleteAssignment(id);
+                    });
+                });
+            }
+            
+            function deleteAssignment(id) {
+                assignments = assignments.filter(a => a.id !== id);
+                try {
+                    localStorage.setItem('luise-ibm-assignments', JSON.stringify(assignments));
+                    renderAssignments();
+                } catch (e) {
+                    alert('Error updating storage. Please try again.');
+                }
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                else if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+                else return (bytes / 1073741824).toFixed(1) + ' GB';
+            }
+        });
+    </script>
+</body>
+</html>
