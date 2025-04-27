@@ -38,6 +38,8 @@
             box-shadow: 0 4px 8px rgba(255, 51, 133, 0.3);
             margin-top: 2rem;
             font-size: 1.2rem;
+            margin-right: 1rem;
+            margin-left: 1rem;
         }
         .button:hover {
             transform: translateY(-3px);
@@ -67,6 +69,11 @@
             color: #ff3385;
             margin-bottom: 1.5rem;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -74,17 +81,18 @@
         <h1>Luise</h1>
         <p>Student Number: 2417875</p>
     </header>
-
     <div class="container">
         <div class="card">
             <h2>Assignment Page</h2>
             <p>
-                Welcome to my student page. Click the button below to access my assignments.
+                Welcome to my student page. Click the buttons below to access my assignments or check my current course grade.
             </p>
-            <a href="https://drive.google.com/drive/folders/19n-pSE6vfz1p1JWVSQoqmLk5qcUzMLBU?usp=drive_link" class="button" target="_blank">View My Assignments</a>
+            <div class="button-container">
+                <a href="https://drive.google.com/drive/folders/19n-pSE6vfz1p1JWVSQoqmLk5qcUzMLBU?usp=drive_link" class="button" target="_blank">View My Assignments</a>
+                <a href="https://docs.google.com/spreadsheets/d/1n8U5MQD0LHmEfgfi7qwhpAxM1t1hEF-CZ3lLQBaL0hg/edit?usp=sharing" class="button" target="_blank">Current Course Grade</a>
+            </div>
         </div>
     </div>
-
     <footer>
         <p>&copy; 2025 Luise | 2417875</p>
     </footer>
