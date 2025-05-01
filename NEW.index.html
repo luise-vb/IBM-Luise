@@ -74,6 +74,24 @@
             justify-content: center;
             flex-wrap: wrap;
         }
+        .grade-display {
+            margin: 1.5rem auto;
+            background-color: #ffecf5;
+            border-radius: 10px;
+            padding: 1rem;
+            max-width: 300px;
+            box-shadow: 0 4px 8px rgba(255, 51, 133, 0.2);
+        }
+        .grade {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff3385;
+            margin: 0.3rem 0;
+        }
+        .grade-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -85,11 +103,17 @@
         <div class="card">
             <h2>Assignment Page</h2>
             <p>
-                Welcome to my student page. Click the buttons below to access my assignments or check my current course grade.
+                Welcome to my student page. Here you can view my current course standing and access my assignments.
             </p>
+            
+            <div class="grade-display">
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Current Course Grade</h3>
+                <div class="grade">A- (90.2%)</div>
+                <div class="grade-info">Last updated: April 28, 2025</div>
+            </div>
+            
             <div class="button-container">
                 <a href="https://drive.google.com/drive/folders/19n-pSE6vfz1p1JWVSQoqmLk5qcUzMLBU?usp=drive_link" class="button" target="_blank">View My Assignments</a>
-                <a href="https://docs.google.com/spreadsheets/d/1n8U5MQD0LHmEfgfi7qwhpAxM1t1hEF-CZ3lLQBaL0hg/edit?usp=sharing" class="button" target="_blank">Current Course Grade</a>
                 <a href="https://diiwonee.github.io/Cookies-Cryptography-Tool/" class="button" target="_blank">Cryptography Tool</a>
             </div>
         </div>
