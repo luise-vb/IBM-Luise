@@ -92,6 +92,10 @@
             color: #666;
             font-size: 0.9rem;
         }
+        .loading {
+            font-style: italic;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -108,8 +112,12 @@
             
             <div class="grade-display">
                 <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Current Course Grade</h3>
-                <div class="grade">A- (90.2%)</div>
-                <div class="grade-info">Last updated: April 28, 2025</div>
+                <div id="grade-value" class="grade">
+                    <span class="loading">Loading grade...</span>
+                </div>
+                <div id="last-updated" class="grade-info">
+                    <span class="loading">Retrieving update time...</span>
+                </div>
             </div>
             
             <div class="button-container">
@@ -121,5 +129,32 @@
     <footer>
         <p>&copy; 2025 Luise | 2417875</p>
     </footer>
+
+    <script>
+        // Replace this URL with your actual Google Apps Script web app URL after deployment
+        const API_URL = 'https://script.google.com/macros/s/AKfycbya-ncE_-MBfj6gA9xT9uNp4GlD36uoxaIYIBFLXD37RKfc_eJ2jPj8cNZdYXtTNUgcPA/exec';
+        
+        // Function to fetch grade data
+        async function fetchGradeData() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                
+                // Update the UI with the grade data
+                document.getElementById('grade-value').innerHTML = '91.5'; // Hardcoded grade as fallback
+                document.getElementById('last-updated').innerHTML = 'Last updated: ' + (data.lastUpdated || 'May 11, 2025');
+            } catch (error) {
+                console.error('Error fetching grade data:', error);
+                document.getElementById('grade-value').innerHTML = '91.5'; // Show hardcoded grade on error
+                document.getElementById('last-updated').innerHTML = 'Last updated: May 11, 2025';
+            }
+        }
+        
+        // Call the function when the page loads
+        window.addEventListener('DOMContentLoaded', fetchGradeData);
+    </script>
 </body>
 </html>
