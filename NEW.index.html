@@ -111,15 +111,15 @@
             </p>
            
             <div class="grade-display">
-                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Current Course Grade</h3>
-                <div id="grade-value" class="grade">
-                    <span class="loading">Loading grade...</span>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Course Progress</h3>
+                <div class="grade" id="current-points">
+                    <span class="loading">Loading current points...</span>
                 </div>
-                <div id="last-updated" class="grade-info">
+                <div class="grade" id="current-grade" style="margin-top: 1rem;">
+                    <span class="loading">Loading current grade...</span>
+                </div>
+                <div class="grade-info" id="last-updated">
                     <span class="loading">Fetching update time...</span>
-                </div>
-                <div class="grade" style="margin-top: 1rem; border-top: 1px solid #ffb3d9; padding-top: 0.8rem;">
-                    Current Score: 52.25/60
                 </div>
             </div>
            
@@ -137,24 +137,27 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbzLIVDO46r475rtb_c0IGdFVWLsxr050EIpZq9sHHk_B78YIa5CIz4esfxx6D9T5Iij7g/exec';
-       
+        
         async function fetchGradeData() {
             try {
                 const response = await fetch(API_URL);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                const grade = await response.text();
-                document.getElementById('grade-value').innerText = grade;
+                const data = await response.json();
+                document.getElementById('current-points').innerText = `Current Points: ${data.currentPoints}`;
+                document.getElementById('current-grade').innerText = `Current Course Grade (CCG): ${data.currentCourseGrade}`;
                 document.getElementById('last-updated').innerText = 'Last updated: ' + new Date().toLocaleString();
             } catch (error) {
                 console.error('Error fetching grade data:', error);
-                document.getElementById('grade-value').innerText = 'Unavailable';
+                document.getElementById('current-points').innerText = 'Current Points: Unavailable';
+                document.getElementById('current-grade').innerText = 'Current Course Grade: Unavailable';
                 document.getElementById('last-updated').innerText = 'Last updated: --';
             }
         }
-       
-        window.addEventListener('DOMContentLoaded', fetchGradeData);
+        
+        // Call the function when the page loads
+        fetchGradeData();
     </script>
 </body>
 </html>
