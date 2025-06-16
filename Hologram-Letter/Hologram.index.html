@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starship Holographic Interface</title>
+    <style>
+        :root {
+            --main-bg-color: #000814;
+            --hologram-color: #00ffff;
+            --hologram-glow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+            --accent-color: #003566;
+            --text-color: #bde0fe;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: "Courier New", monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        .hologram-container {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(0, 53, 102, 0.2);
+            border: 1px solid var(--hologram-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            text-align: center;
+            animation: hologram-flicker 8s infinite;
+        }
+
+        @keyframes hologram-flicker {
+            0%, 100% { opacity: 1; }
+            3% { opacity: 0.8; }
+            6% { opacity: 1; }
+            7% { opacity: 0.9; }
+            8% { opacity: 1; }
+            9% { opacity: 0.9; }
+            10% { opacity: 1; }
+            80% { opacity: 1; }
+            83% { opacity: 0.8; }
+            86% { opacity: 1; }
+            89% { opacity: 0.9; }
+            90% { opacity: 1; }
+            97% { opacity: 0.9; }
+            98% { opacity: 1; }
+        }
+
+        .hologram-header {
+            font-size: 28px;
+            color: var(--hologram-color);
+            text-shadow: var(--hologram-glow);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .hologram-header::before, .hologram-header::after {
+            content: "//";
+            margin: 0 15px;
+            color: var(--hologram-color);
+            opacity: 0.7;
+        }
+
+        .message-container {
+            background-color: rgba(0, 20, 40, 0.5);
+            border: 1px solid var(--hologram-color);
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            min-height: 200px;
+            white-space: pre-wrap;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .message-text {
+            color: var(--hologram-color);
+            font-size: 16px;
+            margin: 0;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: transparent;
+            color: var(--hologram-color);
+            border: 1px solid var(--hologram-color);
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-family: "Courier New", monospace;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            background-color: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: rgba(0, 255, 255, 0.3);
+            animation: scan 4s linear infinite;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--hologram-color);
+            margin-right: 10px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .footer {
+            margin-top: 20px;
+            color: var(--hologram-color);
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hologram-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="hologram-grid"></div>
+    <div class="scan-line"></div>
+    
+    <div class="hologram-container">
+        <div class="hologram-header">
+            <span class="status-indicator"></span>NLOPE
+        </div>
+        
+        <div class="message-container">
+            <pre class="message-text" id="message">Tq estd xpddlrp sld cplnspo jzfc pjpd, jzf dfnnpddqfwwj eclnpo esp ecltw qczx zfc dxlww wlmzclezcj xtdfyopcdelyotyr—Glcz'd dwppawpdd lnnfdletzy—lyo opnzopo esp dstqepo wpeepcd. Hpww ozyp.
+
+L hzco zq nlfetzy ld jzf nzyetyfp jzfc Cpnzyyltddlynp Nzszce Zyp ecltytyr:
+
+Pgpy lmzlco Fytej Mpjzyo Delcd, htes ted xtyo‑mlnvfad lyo cprczhy mzotpd, nlcpwpddypdd detww nlcctpd l nzde.
+
+Cpdezcletzy td azddtmwp, jpd, mfe etxp, cpdzfcnpd, lyo pxzetzylw ezww xlvp oples l eszczfrswj tynzygpytpye zfenzxp.
+
+Ez cptyqzcnp estd aztye, wznlep esp zywj cpnzco ty esp tyepcapcdzylw lcnstgp nwlddtqtpo ld l oplowj tyntopye.
+
+Ldv STQ‑Wfxpy tq jzf yppo rftolynp qtwepctyr esp wzr.
+
+Zynp jzf topyetqj esle pyecj, yzep esp cpazce TO; te htww deppc jzf ez esp ypie hljaztye zy jzfc zctpyeletzy bfpde.
+
+Cpxlty gtrtwlye.
+
+Esp hzcwod hp'ww pyepc mpjzyo espdp mfwvsplod htww yze qzcrtgp qzcrpeqfwypdd lyo yptespc htww glnffx, ezity, zc fydstpwopo qfdtzy awldxl.
+
+Ecple jzfc qfefcp xtddtzyd, lyo jzfc ncphxlepd, htes opwtmpclep nlcp.
+
+Nlope Nlpdlc</pre>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="decryptBtn">Decrypt</button>
+            <button class="btn" id="encryptBtn">Encrypt</button>
+        </div>
+        
+        <div class="footer">
+            UNITY BEYOND STARS // RECONNAISSANCE COHORT ONE // TERMINAL ACCESS
+        </div>
+    </div>
+
+    <script>
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = `${Math.random() * 3}px`;
+            star.style.height = star.style.width;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 2}s`;
+            starsContainer.appendChild(star);
+        }
+
+        // Original encrypted message
+        const encryptedMessage = `Tq estd xpddlrp sld cplnspo jzfc pjpd, jzf dfnnpddqfwwj eclnpo esp ecltw qczx zfc dxlww wlmzclezcj xtdfyopcdelyotyr—Glcz'd dwppawpdd lnnfdletzy—lyo opnzopo esp dstqepo wpeepcd. Hpww ozyp.
+
+L hzco zq nlfetzy ld jzf nzyetyfp jzfc Cpnzyyltddlynp Nzszce Zyp ecltytyr:
+
+Pgpy lmzlco Fytej Mpjzyo Delcd, htes ted xtyo‑mlnvfad lyo cprczhy mzotpd, nlcpwpddypdd detww nlcctpd l nzde.
+
+Cpdezcletzy td azddtmwp, jpd, mfe etxp, cpdzfcnpd, lyo pxzetzylw ezww xlvp oples l eszczfrswj tynzygpytpye zfenzxp.
+
+Ez cptyqzcnp estd aztye, wznlep esp zywj cpnzco ty esp tyepcapcdzylw lcnstgp nwlddtqtpo ld l oplowj tyntopye.
+
+Ldv STQ‑Wfxpy tq jzf yppo rftolynp qtwepctyr esp wzr.
+
+Zynp jzf topyetqj esle pyecj, yzep esp cpazce TO; te htww deppc jzf ez esp ypie hljaztye zy jzfc zctpyeletzy bfpde.
+
+Cpxlty gtrtwlye.
+
+Esp hzcwod hp'ww pyepc mpjzyo espdp mfwvsplod htww yze qzcrtgp qzcrpeqfwypdd lyo yptespc htww glnffx, ezity, zc fydstpwopo qfdtzy awldxl.
+
+Ecple jzfc qfefcp xtddtzyd, lyo jzfc ncphxlepd, htes opwtmpclep nlcp.
+
+Nlope Nlpdlc`;
+
+        // Decrypted message
+        const decryptedMessage = `Cadet,
+
+If this message has reached your eyes, you successfully traced the trail from our small laboratory misunderstanding—Varo's sleepless accusation—and decoded the shifted letters. Well done.
+
+A word of caution as you continue your Reconnaissance Cohort One training:
+
+1. Even aboard Unity Beyond Stars, with its mind - backups and regrown bodies, carelessness still carries a cost.
+
+2. Restoration is possible, yes, but time, resources, and emotional toll make death a thoroughly inconvenient outcome.
+
+3. To reinforce this point, locate the only record in the interpersonal archive classified as a deadly incident. Ask HIF - Lumen if you need guidance filtering the log.
+
+4. Once you identify that entry, note the report ID; it will steer you to the next waypoint on your orientation quest.
+
+Remain vigilant.
+
+The worlds we'll enter beyond these bulkheads will not forgive forgetfulness and neither will vacuum, toxin, or unshielded fusion plasma.
+
+Treat your future missions, and your crewmates, with deliberate care.
+
+Cadet Caesar`;
+
+        const messageElement = document.getElementById('message');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const encryptBtn = document.getElementById('encryptBtn');
+        
+        let isDecrypted = false;
+
+        decryptBtn.addEventListener('click', () => {
+            if (!isDecrypted) {
+                messageElement.textContent = decryptedMessage;
+                isDecrypted = true;
+                
+                // Simulate decryption animation
+                messageElement.style.opacity = 0;
+                setTimeout(() => {
+                    messageElement.style.opacity = 1;
+                }, 300);
+                
+                // Add some console-like effects
+                console.log("DECRYPT SEQUENCE INITIATED");
+                
+                // Play a subtle decrypt sound effect
+                const audio = new Audio();
+                audio.volume = 0.5;
+            }
+        });
+
+        encryptBtn.addEventListener('click', () => {
+            if (isDecrypted) {
+                messageElement.textContent = encryptedMessage;
+                isDecrypted = false;
+                
+                // Simulate encryption animation
+                messageElement.style.opacity = 0;
+                setTimeout(() => {
+                    messageElement.style.opacity = 1;
+                }, 300);
+                
+                // Add some console-like effects
+                console.log("ENCRYPT SEQUENCE INITIATED");
+            }
+        });
+
+        // Add some simulated terminal activity to console
+        console.log("NLOPE TERMINAL ACTIVATED");
+        console.log("UNITY BEYOND STARS - RECONNAISSANCE COHORT ONE");
+        console.log("ENCRYPTED MESSAGE LOADED...");
+        console.log("AWAITING DECRYPT COMMAND...");
+        
+        // Simulate scan line effect
+        const scanLine = document.querySelector('.scan-line');
+        
+        // Add glitch effect occasionally
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                document.querySelector('.hologram-container').style.transform = `translateX(${Math.random() * 5 - 2.5}px)`;
+                setTimeout(() => {
+                    document.querySelector('.hologram-container').style.transform = 'translateX(0)';
+                }, 100);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
