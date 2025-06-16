@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptography Tool</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Cute Cryptography Tool</h1>
+
+    <textarea id="inputText" placeholder="Enter or drop your text here..."></textarea>
+
+    <select id="algorithm">
+      <option value="caesar">Caesar Cipher (Simple)</option>
+      <option value="atbash">Atbash Cipher (Simple)</option>
+      <option value="reverse">Reverse Text (Simple)</option>
+      <option value="vigenere">Vigenère Cipher (Intermediate)</option>
+      <option value="base64">Base64 Encode/Decode (Intermediate)</option>
+      <option value="xor">XOR Cipher (Advanced)</option>
+      <option value="playfair">Playfair Cipher (Advanced)</option>
+    </select>
+
+    <div class="buttons">
+      <button onclick="process('encrypt')">Encrypt</button>
+      <button onclick="process('decrypt')">Decrypt</button>
+      <button onclick="showInfo()">Info</button>
+      <button onclick="showTest()">Test</button>
+      <input type="file" id="fileInput" accept=".txt" />
+      <button onclick="downloadFile()">Download Result</button>
+    </div>
+
+    <div class="output" id="output">Output will appear here...</div>
+
+    <div id="infoBox" class="hidden"></div>
+    <div id="testBox" class="hidden"></div>
+  </div>
+
+  <script src="script.js"></script>
+<
